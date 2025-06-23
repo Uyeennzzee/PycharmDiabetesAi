@@ -52,7 +52,7 @@ exercise_val = 1 if exercise == "Yes" else 0
 
 # --- Prediction ---
 if st.button("Predict"):
-    features = np.array([[preg, glucose, bp, insulin, bmi, age, family, smoke_val, drink_val, exercise_val]])
+    features = np.array([[preg, glucose, bp, insulin, bmi, age, smoke_val, drink_val, exercise_val]])
     prediction = model.predict(features)
 
     if prediction[0] == 1:
