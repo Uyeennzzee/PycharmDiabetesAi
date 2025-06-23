@@ -36,6 +36,8 @@ st.caption("""
 age = st.number_input("Age", min_value=0)
 st.caption("Your current age.")
 
+family_history = st.radio("Do you have a family history of diabetes?", ["No", "Yes"])
+family_val = 1 if family_history == "Yes" else 0
 
 # --- Lifestyle Inputs ---
 st.header("🌿 Lifestyle Habits")
@@ -50,7 +52,7 @@ exercise_val = 1 if exercise == "Yes" else 0
 
 # --- Prediction ---
 if st.button("Predict"):
-    features = np.array([[preg, glucose, bp, insulin, bmi, age, smoke_val, drink_val, exercise_val]])
+    features = np.array([[preg, glucose, bp, insulin, bmi, age, family_val, smoke_val, drink_val, exercise_val]])
     prediction = model.predict(features)
 
     if prediction[0] == 1:
