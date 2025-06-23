@@ -36,8 +36,6 @@ st.caption("""
 age = st.number_input("Age", min_value=0)
 st.caption("Your current age.")
 
-family_history = st.radio("Do you have a family history of diabetes?", ["Yes", "No"])
-family = 1 if family_history == "Yes" else 0
 
 # --- Lifestyle Inputs ---
 st.header("🌿 Lifestyle Habits")
