@@ -19,7 +19,7 @@ glucose = st.number_input("Glucose Level (mg/dL)", min_value=0)
 st.caption("Normal fasting level is 70–99 mg/dL. Above 126 mg/dL may indicate diabetes.")
 
 bp = st.number_input("Blood Pressure (Diastolic, mm Hg)", min_value=0)
-st.caption("Diastolic BP (bottom number). Normal is under 80 mm Hg.")
+st.caption("Normal is under 80 mm Hg.")
 
 insulin = st.number_input("Insulin Level (mu U/ml)", min_value=0)
 st.caption("Normal is 2–25. Low (<2) suggests Type 1 risk. High (>25) suggests resistance.")
@@ -28,18 +28,16 @@ bmi = st.number_input("BMI", min_value=0.0)
 st.caption("""
 **BMI Categories:**
 - Underweight: < 18.5  
-- Normal weight: 18.5 – 24.9  
-- Overweight: 25 – 29.9  
-- Obese (Class I): 30 – 34.9  
-- Obese (Class II): 35 – 39.9  
-- Obese (Class III): ≥ 40
+- Normal: 18.5–24.9  
+- Overweight: 25–29.9  
+- Obese: ≥ 30
 """)
-
-family_history = st.radio("Do you have a family history of diabetes?", ["Yes", "No"])
-family = 1 if family_history == "Yes" else 0
 
 age = st.number_input("Age", min_value=0)
 st.caption("Your current age.")
+
+family_history = st.radio("Do you have a family history of diabetes?", ["Yes", "No"])
+family = 1 if family_history == "Yes" else 0
 
 # --- Lifestyle Inputs ---
 st.header("🌿 Lifestyle Habits")
@@ -63,60 +61,60 @@ if st.button("Predict"):
         # --- Clinical Rule-based Feedback ---
         if insulin < 2 and bmi < 25:
             if age < 40:
-                st.info("🧠 This could suggest **Type 1 Diabetes**. Please consult a doctor for confirmation.")
+                st.info("🧠 This could suggest **Type 1 Diabetes**. Please consult a doctor.")
             else:
-                st.info("🧠 Possibly Type 1. Unusual for age — please consult a doctor.")
+                st.info("🧠 Possibly Type 1 — but age is unusual. Please consult a doctor.")
         elif insulin > 25 and bmi >= 28:
             st.info("🧠 Likely **Type 2 Diabetes**. Please consult a doctor.")
         else:
-            st.info("🧠 Diabetes type unclear — consult a doctor for lab testing.")
+            st.info("🧠 Type unclear — consult a doctor for lab testing.")
 
         if glucose >= 126:
             st.warning("⚠️ Your glucose level is very high. Please seek medical evaluation.")
         if bmi >= 25:
-            st.warning("⚠️ Your BMI indicates overweight or obesity — a major diabetes risk.")
+            st.warning("⚠️ Your BMI is high. This increases diabetes and heart risk.")
         if bp >= 90:
-            st.warning("⚠️ Your blood pressure is above normal. This contributes to diabetes complications.")
+            st.warning("⚠️ Your blood pressure is above normal.")
 
         # --- Lifestyle Rule-based Feedback ---
         if smoke_val == 1:
-            st.warning("🚬 You reported that you smoke. Smoking increases insulin resistance and diabetes risk.")
+            st.warning("🚬 Smoking raises your insulin resistance. Try to quit.")
         else:
-            st.success("✅ Not smoking is a strong protective factor against diabetes.")
+            st.success("✅ Great! Not smoking protects your health.")
 
         if drink_val == 1:
-            st.warning("🍷 Heavy alcohol consumption can impair blood sugar control. Consider moderating alcohol.")
+            st.warning("🍷 Alcohol can cause sugar spikes and worsen diabetes. Cut down if possible.")
         else:
-            st.success("✅ Not drinking heavily helps maintain stable glucose levels.")
+            st.success("✅ Excellent! Avoiding heavy alcohol supports glucose control.")
 
         if exercise_val == 0:
-            st.warning("🏃‍♂️ Lack of physical activity raises your diabetes risk. Try to stay active weekly.")
+            st.warning("🏃‍♂️ Inactivity increases diabetes risk. Try to stay active weekly.")
         else:
-            st.success("✅ Great! Physical activity lowers blood sugar and improves insulin sensitivity.")
+            st.success("✅ Exercise helps regulate insulin and improve glucose metabolism.")
 
     else:
         st.success("✅ You are not likely to have diabetes.")
 
-        # --- Encouragement for healthy ranges ---
+        # Extra feedback for healthy users
         if glucose >= 126:
-            st.info("ℹ️ Your glucose level is borderline high. Even if not diabetic, keep monitoring it.")
+            st.info("ℹ️ Your glucose level is high. Monitor regularly.")
         if bmi >= 25:
-            st.info("ℹ️ Your BMI is above the healthy range. Consider exercise and diet improvement.")
+            st.info("ℹ️ Consider weight loss strategies for long-term health.")
         if bp >= 90:
-            st.info("ℹ️ Your blood pressure is slightly high. Try to reduce salt, stress, or consult a doctor.")
+            st.info("ℹ️ High blood pressure can be a warning sign. Watch it.")
 
-        # --- Lifestyle Feedback for Healthy Users ---
+        # Lifestyle encouragement
         if smoke_val == 1:
-            st.warning("🚬 Smoking still harms your overall health and increases diabetes risk long-term.")
+            st.warning("🚬 Try to reduce or quit smoking.")
         else:
-            st.success("✅ Not smoking is a major health benefit.")
+            st.success("✅ Not smoking is great for your health.")
 
         if drink_val == 1:
-            st.warning("🍷 Consider reducing alcohol. Even without diabetes, it can cause inflammation and sugar spikes.")
+            st.warning("🍷 Consider moderating alcohol.")
         else:
-            st.success("✅ Great job avoiding heavy alcohol use!")
+            st.success("✅ Great! No alcohol is better for your body.")
 
         if exercise_val == 0:
-            st.warning("🏃‍♂️ Try to get at least 150 minutes of moderate exercise weekly.")
+            st.warning("🏃‍♂️ Aim for at least 150 minutes of weekly activity.")
         else:
-            st.success("✅ Keep up the good work staying active!")
+            st.success("✅ Excellent! Keep staying active.")
