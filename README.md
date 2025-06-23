@@ -1,1 +1,4 @@
-later just run streamlit app.py on terminal
+x larat dah
+nk x nak kene jugak
+pray for me
+#degreestudent
