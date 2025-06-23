@@ -2,12 +2,14 @@ import streamlit as st
 import pickle
 import numpy as np
 
-st.title("🔍 AI Diabetes Prediction Tool")
-st.markdown("This tool predicts your risk of diabetes based on your medical data. Please enter accurate values.")
+st.set_page_config(page_title="AI Diabetes Predictor", layout="centered")
+st.title("🧠 AI Diabetes Prediction Tool")
+st.markdown("This tool predicts your diabetes risk using both **medical** and **lifestyle** data.")
 
 # Load model
 model = pickle.load(open("model.pkl", "rb"))
 
+# --- Clinical Inputs ---
 st.header("🧾 Enter Your Medical Information")
 
 preg = st.number_input("Pregnancies", min_value=0)
@@ -39,31 +41,82 @@ family = 1 if family_history == "Yes" else 0
 age = st.number_input("Age", min_value=0)
 st.caption("Your current age.")
 
+# --- Lifestyle Inputs ---
+st.header("🌿 Lifestyle Habits")
+
+smoke = st.radio("Do you currently smoke?", ["No", "Yes"])
+drink = st.radio("Do you consume alcohol heavily?", ["No", "Yes"])
+exercise = st.radio("Have you done any physical activity in the past 30 days (not counting work)?", ["No", "Yes"])
+
+smoke_val = 1 if smoke == "Yes" else 0
+drink_val = 1 if drink == "Yes" else 0
+exercise_val = 1 if exercise == "Yes" else 0
+
+# --- Prediction ---
 if st.button("Predict"):
-    features = np.array([[preg, glucose, bp, insulin, bmi, family, age]])
+    features = np.array([[preg, glucose, bp, insulin, bmi, age, family, smoke_val, drink_val, exercise_val]])
     prediction = model.predict(features)
 
     if prediction[0] == 1:
         st.error("⚠️ You are likely to have diabetes.")
 
-        # Rule-based suggestion
+        # --- Clinical Rule-based Feedback ---
         if insulin < 2 and bmi < 25:
             if age < 40:
                 st.info("🧠 This could suggest **Type 1 Diabetes**. Please consult a doctor for confirmation.")
             else:
-                st.info("🧠 Possibly Type 1, but age is unusual. Please consult a doctor.")
+                st.info("🧠 Possibly Type 1. Unusual for age — please consult a doctor.")
         elif insulin > 25 and bmi >= 28:
             st.info("🧠 Likely **Type 2 Diabetes**. Please consult a doctor.")
         else:
-            st.info("🧠 Type unclear. Please consult a doctor.")
+            st.info("🧠 Diabetes type unclear — consult a doctor for lab testing.")
+
+        if glucose >= 126:
+            st.warning("⚠️ Your glucose level is very high. Please seek medical evaluation.")
+        if bmi >= 25:
+            st.warning("⚠️ Your BMI indicates overweight or obesity — a major diabetes risk.")
+        if bp >= 90:
+            st.warning("⚠️ Your blood pressure is above normal. This contributes to diabetes complications.")
+
+        # --- Lifestyle Rule-based Feedback ---
+        if smoke_val == 1:
+            st.warning("🚬 You reported that you smoke. Smoking increases insulin resistance and diabetes risk.")
+        else:
+            st.success("✅ Not smoking is a strong protective factor against diabetes.")
+
+        if drink_val == 1:
+            st.warning("🍷 Heavy alcohol consumption can impair blood sugar control. Consider moderating alcohol.")
+        else:
+            st.success("✅ Not drinking heavily helps maintain stable glucose levels.")
+
+        if exercise_val == 0:
+            st.warning("🏃‍♂️ Lack of physical activity raises your diabetes risk. Try to stay active weekly.")
+        else:
+            st.success("✅ Great! Physical activity lowers blood sugar and improves insulin sensitivity.")
 
     else:
         st.success("✅ You are not likely to have diabetes.")
 
-        # Extra feedback for borderline/high values
+        # --- Encouragement for healthy ranges ---
         if glucose >= 126:
-            st.info("ℹ️ Your glucose level is above normal. Consider monitoring it regularly.")
+            st.info("ℹ️ Your glucose level is borderline high. Even if not diabetic, keep monitoring it.")
         if bmi >= 25:
-            st.info("ℹ️ Your BMI suggests you're overweight. This may increase your future diabetes risk.")
+            st.info("ℹ️ Your BMI is above the healthy range. Consider exercise and diet improvement.")
         if bp >= 90:
-            st.info("ℹ️ Your blood pressure is slightly high. Keep an eye on it.")
+            st.info("ℹ️ Your blood pressure is slightly high. Try to reduce salt, stress, or consult a doctor.")
+
+        # --- Lifestyle Feedback for Healthy Users ---
+        if smoke_val == 1:
+            st.warning("🚬 Smoking still harms your overall health and increases diabetes risk long-term.")
+        else:
+            st.success("✅ Not smoking is a major health benefit.")
+
+        if drink_val == 1:
+            st.warning("🍷 Consider reducing alcohol. Even without diabetes, it can cause inflammation and sugar spikes.")
+        else:
+            st.success("✅ Great job avoiding heavy alcohol use!")
+
+        if exercise_val == 0:
+            st.warning("🏃‍♂️ Try to get at least 150 minutes of moderate exercise weekly.")
+        else:
+            st.success("✅ Keep up the good work staying active!")
