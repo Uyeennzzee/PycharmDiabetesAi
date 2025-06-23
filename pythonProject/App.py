@@ -1,13 +1,18 @@
 import streamlit as st
 import pickle
 import numpy as np
+import os
 
 st.set_page_config(page_title="AI Diabetes Predictor", layout="centered")
 st.title("🧠 AI Diabetes Prediction Tool")
 st.markdown("This tool predicts your diabetes risk using both **medical** and **lifestyle** data.")
 
-# Load model
-model = pickle.load(open("model.pkl", "rb"))
+# --- Load model safely using script-relative path ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Folder where App.py is located
+model_path = os.path.join(BASE_DIR, "model.pkl")
+
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
 
 # --- Clinical Inputs ---
 st.header("🧾 Enter Your Medical Information")
